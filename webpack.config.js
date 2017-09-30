@@ -1,20 +1,33 @@
-var path = require('path')
-var webpack = require('webpack')
+var path = require('path');
+var webpack = require('webpack');
+var merge = require('webpack-merge');
 var tran = process.hrtime()[1];
-module.exports = {
+var config = {
   entry: {
-    app: path.resolve(__dirname, 'src', 'Stars.vue'),
+    stars: path.resolve(__dirname, 'src', 'Stars.vue'),
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].bundle.js',
     chunkFilename: `[name].lazy.[hash].${tran}.js`,
-    publicPath: './js/',
+    publicPath: './dist/',
   },
-  plugins: process.env.NODE_ENV !== 'production' ? [
-     new webpack.optimize.UglifyJsPlugin({minimize: true})
-  ] : [
-  ] ,
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: '"production"'
+      }
+    }),
+    new webpack.optimize.UglifyJsPlugin({
+      sourceMap: true,
+      compress: {
+        warnings: false
+      }
+    }),
+    new webpack.LoaderOptionsPlugin({
+      minimize: true
+    })
+  ],
   module: {
     loaders: [
       {
@@ -60,6 +73,9 @@ module.exports = {
       }
     ]
   },
+  externals: {
+    vue: 'vue'
+  },
   resolve: {
     alias: {
       'vue$': 'vue/dist/vue.esm.js'
@@ -73,25 +89,79 @@ module.exports = {
     hints: false
   },
   devtool: '#eval-source-map'
-}
-
-if (process.env.NODE_ENV === 'production') {
-  module.exports.devtool = '#source-map'
-  // http://vue-loader.vuejs.org/en/workflow/production.html
-  module.exports.plugins = (module.exports.plugins || []).concat([
-    new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: '"production"'
-      }
-    }),
-    new webpack.optimize.UglifyJsPlugin({
-      sourceMap: true,
-      compress: {
-        warnings: false
-      }
-    }),
-    new webpack.LoaderOptionsPlugin({
-      minimize: true
-    })
-  ])
-}
+}//end config
+var mergeWithConfigWindowTarget = merge(config, {
+    devtool: '#source-map',
+    plugins: [
+      new webpack.DefinePlugin({
+        'process.env': {
+          NODE_ENV: '"production"'
+        }
+      }),
+      new webpack.optimize.UglifyJsPlugin({
+        sourceMap: true,
+        compress: {
+          warnings: false
+        }
+      }),
+      new webpack.LoaderOptionsPlugin({
+        minimize: true
+      })
+    ],
+    output: {
+      filename: '[name].min.js',
+      libraryTarget: 'window',
+      library: 'VueStarsRatingWindow'
+    }
+});
+var mergeWithConfigUMDTarget = merge(config, {
+    devtool: '#source-map',
+    plugins: [
+      new webpack.DefinePlugin({
+        'process.env': {
+          NODE_ENV: '"production"'
+        }
+      }),
+      new webpack.optimize.UglifyJsPlugin({
+        sourceMap: true,
+        compress: {
+          warnings: false
+        }
+      }),
+      new webpack.LoaderOptionsPlugin({
+        minimize: true
+      })
+    ],
+    output: {
+      filename: '[name].umd.js',
+      libraryTarget: 'umd',
+      // These options are useful if the user wants to load the module with AMD
+      library: 'vue-stars-rating-umd',
+      umdNamedDefine: true
+    }
+});
+var mergeWithConfigCommonJs2Target = merge(config, {
+    devtool: '#source-map',
+    plugins: [
+      new webpack.DefinePlugin({
+        'process.env': {
+          NODE_ENV: '"production"'
+        }
+      }),
+      new webpack.optimize.UglifyJsPlugin({
+        sourceMap: true,
+        compress: {
+          warnings: false
+        }
+      }),
+      new webpack.LoaderOptionsPlugin({
+        minimize: true
+      })
+    ],
+    output: {
+        filename: '[name].js',
+        libraryTarget: 'commonjs2',
+        library: 'vue-stars-rating'
+    }
+});
+module.exports = [mergeWithConfigCommonJs2Target,mergeWithConfigUMDTarget, mergeWithConfigWindowTarget]

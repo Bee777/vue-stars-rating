@@ -30,7 +30,8 @@
   },
   "homepage": "https://github.com/Bee777/vue-stars-rating#readme",
   "dependencies": {
-    "babel-runtime": "^6.26.0"
+    "babel-runtime": "^6.26.0",
+    "webpack-merge": "^4.1.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",

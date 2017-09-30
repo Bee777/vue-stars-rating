@@ -1,1 +1,1 @@
-module.exports = require('./dist/app.bundle');
+module.exports = require('./dist/stars.js');

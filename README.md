@@ -1,8 +1,7 @@
 # vue-stars-rating
 <p>VueJs Make a simple stars rating</p>
-<pre><b>To install vue star rating:</b></pre>
+<b>To install vue stars rating</b>
 <h3>NPM:</h3>
-<p>npm install vue-stars-rating</p>
+<pre><b>npm install vue-stars-rating</b></pre>
 <h3>YARN:</h3>
-<p>yarn add vue-stars-rating</p>
-
+<pre><b>yarn add vue-stars-rating</b></pre>

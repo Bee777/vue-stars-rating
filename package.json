@@ -2,7 +2,7 @@
   "name": "vue-stars-rating",
   "version": "0.0.2",
   "description": "Vue Stars Rating",
-  "main": "dist/app.bundle.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "cross-env NODE_ENV=development webpack-dev-server --open --hot",

@@ -2,18 +2,19 @@ var path = require('path');
 var webpack = require('webpack');
 var merge = require('webpack-merge');
 var tran = process.hrtime()[1];
+var files = '';
 var config = {
-  entry: {
+  entry: process.env.NODE_ENV !== 'production'?path.resolve(__dirname, 'src', 'main.js') : {
     stars: path.resolve(__dirname, 'src', 'Stars.vue'),
-  },
+    'stars-half': path.resolve(__dirname, 'src', 'StarsHalf.vue') },
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: '[name].bundle.js',
+    filename: process.env.NODE_ENV === 'production'?'[name].bundle.js':'main.js',
     chunkFilename: `[name].lazy.[hash].${tran}.js`,
-    publicPath: './dist/',
+    publicPath: '/dist/',
   },
-  plugins: [
-    new webpack.DefinePlugin({
+  plugins: process.env.NODE_ENV === 'production' ? [
+     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: '"production"'
       }
@@ -27,7 +28,7 @@ var config = {
     new webpack.LoaderOptionsPlugin({
       minimize: true
     })
-  ],
+  ] : [],
   module: {
     loaders: [
       {
@@ -73,9 +74,9 @@ var config = {
       }
     ]
   },
-  externals: {
+  externals: process.env.NODE_ENV === 'production'?{
     vue: 'vue'
-  },
+  }:{},
   resolve: {
     alias: {
       'vue$': 'vue/dist/vue.esm.js'
@@ -111,7 +112,7 @@ var mergeWithConfigWindowTarget = merge(config, {
     output: {
       filename: '[name].min.js',
       libraryTarget: 'window',
-      library: 'VueStarsRatingWindow'
+      library: 'Vue-[name]-RatingWindow'
     }
 });
 var mergeWithConfigUMDTarget = merge(config, {
@@ -136,7 +137,7 @@ var mergeWithConfigUMDTarget = merge(config, {
       filename: '[name].umd.js',
       libraryTarget: 'umd',
       // These options are useful if the user wants to load the module with AMD
-      library: 'vue-stars-rating-umd',
+      library: 'vue-[name]-rating-umd',
       umdNamedDefine: true
     }
 });
@@ -159,9 +160,13 @@ var mergeWithConfigCommonJs2Target = merge(config, {
       })
     ],
     output: {
-        filename: '[name].js',
-        libraryTarget: 'commonjs2',
-        library: 'vue-stars-rating'
+      filename: '[name].js',
+      libraryTarget: 'commonjs2',
+      library: 'vue-[name]-rating'
     }
 });
-module.exports = [mergeWithConfigCommonJs2Target,mergeWithConfigUMDTarget, mergeWithConfigWindowTarget]
+if(process.env.NODE_ENV !== 'production'){
+  module.exports = config;
+}else{
+  module.exports = [mergeWithConfigCommonJs2Target,mergeWithConfigUMDTarget, mergeWithConfigWindowTarget];
+}

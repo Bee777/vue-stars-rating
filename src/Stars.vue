@@ -1,11 +1,12 @@
 <template>
-<div class="rating">
+<div class="rating" :style="{color:bgColor}">
   <template v-for="star in stars">
     <input type="radio" :class="inClass" :value="star">
-    <label :for="belName" :class="[belClass, star<=rated?'rated':'']"
+    <label :for="belFor" :class="[belClass, star<=rated?'rated':'']"
       @click="setStar(star, $event)" 
       @mouseover="setStar(star, $event)"
-      @mouseout="unsetStar" >
+      @mouseout="unsetStar" 
+      :style="{color:star<=rated?outColor:'', fontSize:fontSize}">
     </label>
   </template>
 </div>
@@ -15,16 +16,22 @@ export default{
     props:{
       belClass: { type: String, default: ''},
       inClass:{ type: String, default: ''},
-      belName: { type: String, default: ''},
-      starLevel: { type: Number, default: 1},
-      value: {type: Number, default: 1 }
+      belFor: { type: String, default: ''},
+      starLevel: { type: Number, default: 0},
+      color: { type: String, default: '#e54e26'},
+      hoverColor: { type: String, default: '#e54e26'},
+      bgColor: { type: String, default: '#ddd'},
+      fontSize: {type: String, default: "1.25em;"},
+      value: {type: Number, default: 0 },
+      range: { type: Array, default: ()=>{return [1,2,3,4,5];}},
     },
     data() {
         return {
-          stars: [1,2,3,4,5],
+          stars: this.range,
           rated: this.starLevel,
           overRated: 0,
           outRated: this.starLevel,
+          outColor: '',
         }
     },
     methods:{
@@ -36,11 +43,13 @@ export default{
           this.$emit('input', star)
         }else{
           this.overRated = (star>=this.outRated)?star:this.outRated
-          this.rated=this.overRated
+          this.rated=this.overRated;
+          this.outColor=this.hoverColor;
         }
       },//end set stars
       unsetStar(e){
-        this.rated = this.outRated
+        this.rated = this.outRated;
+        this.outColor=this.color;
       },//end unset stars
     },
     mounted(){
@@ -49,8 +58,7 @@ export default{
     }
 }   
 </script>
-<style lang="css" scopred>
-@import url(//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css);
+<style lang="css" scoped>
 label.rated{
     color: #e54e26;
 }

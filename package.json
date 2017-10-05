@@ -1,6 +1,6 @@
 {
   "name": "vue-stars-rating",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Vue Stars Rating",
   "main": "index.js",
   "scripts": {
